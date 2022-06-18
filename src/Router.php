@@ -107,11 +107,13 @@ class Router {
         $is_ok = true;
         if ($beforeRoutes !== NULL) {
             foreach ($beforeRoutes as $middle) {
-                if (!$middle instanceof IMiddleware) {
+
+                $middleware = new $middle;
+                if (!$middleware instanceof IMiddleware) {
                     throw new Exception("Invalid Middleware");
                 }
 
-                $result = call_user_func_array([new $middle, 'handle'], []);
+                $result = call_user_func_array([$middleware, 'handle'], []);
                 if ($result instanceof LRedirectReponse) {
                     $result->handle();
                     return;
