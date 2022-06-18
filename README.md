@@ -2,7 +2,9 @@
 
 # LightRouter
 
-A Fast, Easy and Lightweight Router for PHP. It also supports middlewares.
+A Fast, Easy and Lightweight Router for PHP. It also supports middlewares. During tests, it ran 8000+ requests per second.
+
+![LightRouter Speed Test](./docs/speed.png)
 
 ## About Author
 [Nabeel Ali](https://iconiccodes.com)
