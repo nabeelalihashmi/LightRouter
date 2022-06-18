@@ -25,10 +25,12 @@ class LJSONResponse implements IResponse {
  
     public function handle() {
         http_response_code($this->__status);
+        header('Content-Type: application/json');
         foreach ($this->__headers as $key => $value) {
             header($key . ': ' . $value);
         }
         echo json_encode($this->__data);
     }
 }
+
 
