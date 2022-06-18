@@ -4,6 +4,7 @@
     "type": "library",
     "license": "MIT",
     "homepage": "https://iconiccodes.com",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "IconicCodes\\LightRouter\\": "src/"
