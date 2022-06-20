@@ -21,12 +21,17 @@ Email: [mail2nabeelali@gmail.com](mailto:mail2nabeelali@gmail.com)
     * Supports Middlewares
     * Supports Dynamic Routes
     * Supports GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
-    * Handles Custom Responses
+    * Handles Custom Responses (user nabeelalihashmi/LightHttp Package)
 
 
 ## Installtion
 ```
-composer require nabeelalihashmi/lightrouter
+composer require nabeelalihashmi/lightrouter:dev-master
+```
+Optional use LightHttp package for custom responses
+```
+composer require nabeelalihashmi/lighthttp:dev-master
+
 ```
 
 ## Basic Usage
@@ -153,7 +158,7 @@ class HomeController {
 ```
 
 ## Responses
-
+## NOTE: Reponses are removed from LightRouter packages and they are part of LightHttp
 Controllers/callbacks can return a Response implementing `IResponse` interface having `handle` method. By default LightRouter has these Responses
 
 *   LResponse

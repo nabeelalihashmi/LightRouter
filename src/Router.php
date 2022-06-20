@@ -13,7 +13,7 @@
 namespace IconicCodes\LightRouter;
 
 use Exception;
-use IconicCodes\LightRouter\IResponse;
+use IconicCodes\LightHttp\IResponse;
 
 class Router {
     private $__routes = [];
