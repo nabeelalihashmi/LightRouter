@@ -114,9 +114,8 @@ class Router {
                 }
 
                 $result = call_user_func_array([$middleware, 'handle'], []);
-                if ($result instanceof LRedirectReponse) {
+                if ($result instanceof IResponse) {
                     $result->handle();
-                    return;
                 }
                 $is_ok = $result;
                 if ($is_ok == false) {
