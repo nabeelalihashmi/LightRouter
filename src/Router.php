@@ -13,7 +13,6 @@
 namespace IconicCodes\LightRouter;
 
 use Exception;
-use IconicCodes\LightHttp\IResponse;
 
 class Router {
     private $__routes = [];
@@ -21,7 +20,8 @@ class Router {
     public $allowOverrideRequestMethod = true;
     public $allowedMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
     public $overrideSlug = "__method";
-
+    public $response_type_interface_name = null;
+    
     function setNotFound(callable $notFound) {
         $this->__notFound = $notFound;
     }
@@ -114,7 +114,7 @@ class Router {
                 }
 
                 $result = call_user_func_array([$middleware, 'handle'], []);
-                if ($result instanceof IResponse) {
+                if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
                     $result->handle();
                 }
                 $is_ok = $result;
@@ -135,7 +135,7 @@ class Router {
             return;
         }
 
-        if ($result instanceof IResponse) {
+        if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
             $result->handle();
             return;
         }
