@@ -13,27 +13,92 @@
 namespace IconicCodes\LightRouter;
 
 use Exception;
+use IconicCodes\LightRouter\IMiddleware;
 
-class Router {
-    private $__routes = [];
-    private $__notFound = null;
-    public $allowOverrideRequestMethod = true;
-    public $allowedMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
-    public $overrideSlug = "__method";
-    public $response_type_interface_name = null;
+/**
+ * LRouter
+ */
+class LRouter {    
+    /**
+     * __routes
+     *
+     * @var array<mixed|array>
+     */
+    private $__routes = [];    
+   
     
+    /**
+     * __notFound
+     *
+     * @var callable
+     */
+    private $__notFound;  
+
+    /**
+     * allowOverrideRequestMethod
+     *
+     * @var bool
+     */
+    public $allowOverrideRequestMethod = true;    
+    /**
+     * allowedMethod
+     *
+     * @var array<string>
+     */
+    public $allowedMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];    
+    /**
+     * overrideSlug
+     *
+     * @var string
+     */
+    public $overrideSlug = "__method";    
+    /**
+     * response_type_interface_name
+     *
+     * @var string|null
+     * 
+     */
+    public $response_type_interface_name = null;
+        
+    /**
+     * setNotFound
+     *
+     * @param  callable $notFound
+     * @return void
+     */
     function setNotFound(callable $notFound) {
         $this->__notFound = $notFound;
     }
-
+    
+    /**
+     * setRoutes
+     *
+     * @param  mixed $routes
+     * @return void
+     */
     public function setRoutes($routes) {
         $this->__routes = $routes;
     }
-
+    
+    /**
+     * addRoute
+     *
+     * @param  string $method
+     * @param  string $uri
+     * @param  callable $callback
+     * @param  array<IMiddleware> $beforeRoutes
+     * @param  array<IMiddleware> $afterRoutes
+     * @return void
+     */
     public function addRoute($method, $uri, $callback, $beforeRoutes = [], $afterRoutes = []) {
         $this->__routes[] = [$method, $this->clearRouteName($uri), $callback, $beforeRoutes, $afterRoutes];
     }
-
+    
+    /**
+     * makeRequestUri
+     *
+     * @return string
+     */
     private function makeRequestUri() {
         $script = $_SERVER['SCRIPT_NAME'];
         $dirname = dirname($script);
@@ -42,12 +107,23 @@ class Router {
         $uri = str_replace([$dirname, $basename], "", $_SERVER['REQUEST_URI']);
         return $this->clearRouteName(explode('?', $uri)[0]);
     }
-
+    
+    /**
+     * clearRouteName
+     *
+     * @param  mixed $route
+     * @return string
+     */
     public function clearRouteName($route = '') {
         $route = trim(preg_replace('~/{2,}~', '/', $route), '/');
         return $route === '' ? '/' : "/{$route}";
     }
-
+    
+    /**
+     * matchRoute
+     *
+     * @return mixed
+     */
     private function matchRoute() {
         $uri = $this->makeRequestUri();
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -89,7 +165,12 @@ class Router {
         return [];
     }
 
-
+    
+    /**
+     * run
+     *
+     * @return void
+     */
     public function run() {
         $route = $this->matchRoute();
         if ($route == []) {
@@ -115,7 +196,7 @@ class Router {
 
                 $result = call_user_func_array([$middleware, 'handle'], []);
                 if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
-                    $result->handle();
+                    call_user_func_array([$result, 'handle'], []);
                 }
                 $is_ok = $result;
                 if ($is_ok == false) {
@@ -136,10 +217,29 @@ class Router {
         }
 
         if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
-            $result->handle();
+            call_user_func_array([$result,'handle'], []);
             return;
         }
 
         print_r($result);
+
+        if ($afterRoutes !== NULL) {
+            foreach ($afterRoutes as $middle) {
+
+                $middleware = new $middle;
+                if (!$middleware instanceof IMiddleware) {
+                    throw new Exception("Invalid Middleware");
+                }
+
+                $result = call_user_func_array([$middleware, 'handle'], []);
+                if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
+                    call_user_func_array([$result, 'handle'], []);
+                }
+                $is_ok = $result;
+                if ($is_ok == false) {
+                    return;
+                }
+            }
+        }
     }
 }

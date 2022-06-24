@@ -26,11 +26,11 @@ Email: [mail2nabeelali@gmail.com](mailto:mail2nabeelali@gmail.com)
 
 ## Installtion
 ```
-composer require nabeelalihashmi/lightrouter:dev-master
+composer require nabeelalihashmi/lightrouter
 ```
 Optional use LightHttp package for custom responses
 ```
-composer require nabeelalihashmi/lighthttp:dev-master
+composer require nabeelalihashmi/lighthttp
 
 ```
 
@@ -110,6 +110,11 @@ class LoginCheck implements IMiddleware{
 
 ## Routing
 
+### Execution
+```
+Request -> Before Middlewares -> Callback -> After Middlwares
+```
+
 You can add routes by following methods
 
 1. `setRoutes`
@@ -122,7 +127,8 @@ But first you need to know about a route structure. In LightRouter, a route stru
     'METHOD | String',
     'URI | String',
     'CALLBACK | Array or Callback',
-    'MIDDLEWARES | Array'
+    'BEFORE_MIDDLEWARES | Array'
+    'After_MIDDLEWARES | Array'
 ]
 ```
 
@@ -159,11 +165,22 @@ class HomeController {
 
 ## Responses
 ## NOTE: Reponses are removed from LightRouter packages and they are part of LightHttp
+
+To make it modular and independant, you can plug LightHttp IResponse or use own.
+
+```
+$router->response_type_interface_name = gettype('IconicCodes\LightHttp\Responses\IResponse);
+```
+
+You can make your own reponse handler too. It must have 'handle' method.
+
+<s>
 Controllers/callbacks can return a Response implementing `IResponse` interface having `handle` method. By default LightRouter has these Responses
 
 *   LResponse
 *   LJSONResponse
 *   LRedirectResponse
+</s>
 
 ## Methods
 

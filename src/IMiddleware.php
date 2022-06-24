@@ -11,6 +11,12 @@
 */
 namespace IconicCodes\LightRouter;
 
-interface IMiddleware {
+
+interface IMiddleware {    
+    /**
+     * handle
+     *
+     * @return mixed
+     */
     public function handle();
 }
