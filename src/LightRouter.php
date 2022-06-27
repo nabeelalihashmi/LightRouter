@@ -16,9 +16,9 @@ use Exception;
 use IconicCodes\LightRouter\IMiddleware;
 
 /**
- * LRouter
+ * LightRouter
  */
-class LRouter {    
+class LightRouter {    
     /**
      * __routes
      *
