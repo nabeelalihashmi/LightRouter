@@ -221,8 +221,6 @@ class LightRouter {
             return;
         }
 
-        print_r($result);
-
         if ($afterRoutes !== NULL) {
             foreach ($afterRoutes as $middle) {
 
