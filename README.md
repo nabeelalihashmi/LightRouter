@@ -153,7 +153,7 @@ $router->setRoutes([
 LightRouter supports dynamic routes. You can use `.+` in your URI, and in callback function, you can use variables according to position.
 
 ```
-$router->addRoute('GET', '/user/.+/.*', [HomeController::class, 'user'], [MyMiddleware::class]);
+$router->addRoute('GET', '/user/{arg1}/{arg2}', [HomeController::class, 'user'], [MyMiddleware::class]);
 
 class HomeController {
     public function user($id, $name) {

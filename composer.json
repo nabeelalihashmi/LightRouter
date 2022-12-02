@@ -1,20 +1,20 @@
 {
-    "name": "nabeelalihashmi/lightrouter",
-    "description": "Fast and light PHP Router",
-    "type": "library",
-    "license": "MIT",
-    "homepage": "https://iconiccodes.com",
-    "minimum-stability": "stable",
-    "autoload": {
-        "psr-4": {
-            "IconicCodes\\LightRouter\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Nabeel Ali",
-            "email": "mail2nabeelali@gmail.com",
-            "homepage": "https://iconiccodes.com"
-        }
-    ]
+  "name": "nabeelalihashmi/lightrouter",
+  "description": "Fast and light PHP Router",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://iconiccodes.com",
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "IconicCodes\\LightRouter\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Nabeel Ali",
+      "email": "mail2nabeelali@gmail.com",
+      "homepage": "https://iconiccodes.com"
+    }
+  ]
 }

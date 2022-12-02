@@ -18,5 +18,5 @@ interface IMiddleware {
      *
      * @return mixed
      */
-    public function handle();
+    public function handle($params);
 }

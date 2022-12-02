@@ -13,12 +13,14 @@
 namespace IconicCodes\LightRouter;
 
 use Exception;
+use IconicCodes\LightHttp\Interfaces\IResponse;
 use IconicCodes\LightRouter\IMiddleware;
 
 /**
  * LightRouter
  */
 class LightRouter {    
+    private static $instance = null;
     /**
      * __routes
      *
@@ -33,6 +35,9 @@ class LightRouter {
      * @var callable
      */
     private $__notFound;  
+
+    public $currentUri = '';
+    
 
     /**
      * allowOverrideRequestMethod
@@ -59,7 +64,14 @@ class LightRouter {
      * 
      */
     public $response_type_interface_name = null;
+     
+    public function __construct() {
+            self::$instance = $this;
+    }
         
+    public static function getInstance() {
+        return self::$instance;
+    }
     /**
      * setNotFound
      *
@@ -105,7 +117,9 @@ class LightRouter {
         $dirname = $dirname === '/' ? '' : $dirname;
         $basename = basename($script);
         $uri = str_replace([$dirname, $basename], "", $_SERVER['REQUEST_URI']);
-        return $this->clearRouteName(explode('?', $uri)[0]);
+        $uri = $this->clearRouteName(explode('?', $uri)[0]);
+        $this->currentUri = $uri;
+        return $uri;
     }
     
     /**
@@ -141,20 +155,27 @@ class LightRouter {
 
         foreach ($this->__routes as $index => $listUri) {
 
-            $matchUri = $listUri[1];
-            $matchMethod = $listUri[0];
+            $matchUri = $listUri[1] ?? null;
+            $matchMethod = $listUri[0] ?? null;
 
             if ($matchMethod !== $method) {
                 continue;
             }
 
-            if (preg_match("#^$matchUri$#", $uri)) {
+            $matchUri = preg_replace('/{(.*?)}/', '(.+)', $matchUri);
+
+            if (preg_match("#^$matchUri$#", $uri, $m)) {
+
 
                 $realUri = explode('/', $uri);
                 $fakeUri = explode('/', $matchUri);
+                
+                if (count($realUri) !== count($fakeUri)) {
+                    return [];
+                }
 
                 foreach ($fakeUri as $key => $value) {
-                    if ($value == '.+') {
+                    if ($value == '(.+)') {
                         $replacementValues[] = $realUri[$key];
                     }
                 }
@@ -194,12 +215,12 @@ class LightRouter {
                     throw new Exception("Invalid Middleware");
                 }
 
-                $result = call_user_func_array([$middleware, 'handle'], []);
-                if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
-                    call_user_func_array([$result, 'handle'], []);
+                $result = call_user_func_array([$middleware, 'handle'], ['params' => ['args' => $route_params, 'data' => $route_data[1]]]);
+                if ($result instanceof IResponse) {
+                    call_user_func_array([$result, 'send'], []);
                 }
                 $is_ok = $result;
-                if ($is_ok == false) {
+                if ($is_ok !== true) {
                     return;
                 }
             }
@@ -216,8 +237,8 @@ class LightRouter {
             return;
         }
 
-        if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
-            call_user_func_array([$result,'handle'], []);
+        if ($result instanceof IResponse) {
+            call_user_func_array([$result,'send'], []);
             return;
         }
 
@@ -231,12 +252,12 @@ class LightRouter {
                     throw new Exception("Invalid Middleware");
                 }
 
-                $result = call_user_func_array([$middleware, 'handle'], []);
-                if ($this->response_type_interface_name !== null && $result instanceof $this->response_type_interface_name) {
-                    call_user_func_array([$result, 'handle'], []);
+                $result = call_user_func_array([$middleware, 'handle'], ['params' => ['args' => $route_params, 'data' => $route_data[1]]]);
+                if ($result instanceof IResponse) {
+                    call_user_func_array([$result, 'send'], []);
                 }
                 $is_ok = $result;
-                if ($is_ok == false) {
+                if ($is_ok !== false) {
                     return;
                 }
             }
