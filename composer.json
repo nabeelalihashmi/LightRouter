@@ -10,6 +10,9 @@
       "IconicCodes\\LightRouter\\": "src/"
     }
   },
+  "require": {
+    "nabeelalihashmi/lighthttp": "dev-master"
+  },
   "authors": [
     {
       "name": "Nabeel Ali",
